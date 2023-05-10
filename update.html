@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>Update Configuration</title>
+</head>
+
+<body>
+    <h1>Update Configuration</h1>
+    <form>
+        <label for="number">Number:</label><br>
+        <input type="text" id="number" name="number"><br>
+        <label for="connectionString">Connection String:</label><br>
+        <textarea id="connectionString" name="connectionString"></textarea><br>
+        <input type="submit" value="Update Configuration">
+    </form>
+    <script>
+        const numberInput = document.getElementById('number');
+        const connectionStringInput = document.getElementById('connectionString');
+        const configForm = document.querySelector('form');
+
+        async function updateConfiguration(event) {
+            event.preventDefault();
+            const response = await fetch('/update-config', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    number: numberInput.value,
+                    connectionString: connectionStringInput.value
+                })
+            });
+            if (response.ok) {
+                alert('Configuration updated successfully!');
+            } else {
+                alert('Failed to update configuration.');
+            }
+        }
+
+        async function loadConfiguration() {
+            const response = await fetch('/config');
+            if (response.ok) {
+                const config = await response.json();
+                numberInput.value = config.number;
+                connectionStringInput.value = config.connectionString;
+            } else {
+                alert('Failed to load configuration.');
+            }
+        }
+
+        configForm.addEventListener('submit', updateConfiguration);
+
+        loadConfiguration();
+    </script>
+</body>
+
+</html>
